@@ -13,16 +13,23 @@ public class Queue<T> implements UnboundedQueueInterface<T> {
 	private Node<T> head;
 	private Node<T> tail;
 	private Queue<T> reversed = new Queue<>();
+	private Node<T> prevNode = head;
 
 	public Queue() {		
 		this.head = null;
 		this.tail = null;
-		size = 0;
+		this.size = 0;
             // TODO 1
     }
 	
 	public Queue(Queue<T> other) {
-		Queue<T> newQueue = other;
+		Queue<T> copy = other;
+		this.head = null; this.tail = null; this.size = 0;
+		for(int i = 0; i<other.getSize(); i++){
+			T node = copy.dequeue();
+			enqueue(node);
+		}
+
             // TODO 2
 	}
 	
@@ -55,14 +62,21 @@ public class Queue<T> implements UnboundedQueueInterface<T> {
 		if(isEmpty()) throw new NoSuchElementException();
 		T temp = this.tail.data;
 		if(this.size==1){
-			this.head = null;
-			this.tail = null;
+			this.head = null; this.tail = null;
 			this.size--;
 			return temp;
 		}
-		this.tail = this.tail.prev;
+		this.tail = getPrev(this.size);
 		this.size--;
         return temp;
+	}
+	public Node<T> getPrev(int size){
+		if(size==1)return null;
+		if(size==2){
+			return this.prevNode;
+		}
+		this.prevNode = this.prevNode.next;
+		return getPrev(size-1);
 	}
 
 	@Override
@@ -82,16 +96,17 @@ public class Queue<T> implements UnboundedQueueInterface<T> {
 
 	public UnboundedQueueInterface<T> reversedHelper(int size){
 
+		Node<T> temp = this.head;
 		if(size == 0)
 			return this.reversed;
 		if(size==1){
 			this.reversed.enqueue(this.tail.data);
+			this.head = temp;
 			return this.reversed;
 		}
 		this.reversed.enqueue(this.head.data);
 		this.head = this.head.next;
 		return reversedHelper(size-1);
-
 
 	}
 }
