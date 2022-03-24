@@ -77,26 +77,20 @@ public class Queue<T> implements UnboundedQueueInterface<T> {
 	public UnboundedQueueInterface<T> reversed() {
             // TODO 8
 			if(isEmpty()) throw new NoSuchElementException();
-			Queue<T> revQueue = reversedHelper(this.size);
-
-			
-            return revQueue;
+			return reversedHelper(this.size);
 	}
 
 	public UnboundedQueueInterface<T> reversedHelper(int size){
 
-		if(size == 0) return this.reversed;
-		if(size!=1){
-			this.reversed.enqueue(this.head.data);
-			this.head = this.head.next;
-			return reversedHelper(size-1);
-			
-		}
-		else{
+		if(size == 0)
+			return this.reversed;
+		if(size==1){
 			this.reversed.enqueue(this.tail.data);
 			return this.reversed;
 		}
-		return this.reversed;
+		this.reversed.enqueue(this.head.data);
+		this.head = this.head.next;
+		return reversedHelper(size-1);
 
 
 	}
