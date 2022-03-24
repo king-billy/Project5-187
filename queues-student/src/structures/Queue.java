@@ -9,51 +9,98 @@ import java.util.NoSuchElementException;
  ***************************************************************************************/
 public class Queue<T> implements UnboundedQueueInterface<T> {
 
+	private int size;
+	private Node<T> head;
+	private Node<T> tail;
+	private Queue<T> reversed = new Queue<>();
+
 	public Queue() {		
+		this.head = null;
+		this.tail = null;
+		size = 0;
             // TODO 1
     }
 	
 	public Queue(Queue<T> other) {
+		Queue<T> newQueue = other;
             // TODO 2
 	}
 	
 	@Override
 	public boolean isEmpty() {
             // TODO 3
-            return false;
+		return (this.size==0);
 	}
 
 	@Override
 	public int getSize() {
             // TODO 4
-            return 0;
+			return this.size;
 	}
 
 	@Override
 	public void enqueue(T element) {
+		this.head = new Node<>(element, head);
+		this.size++;
+
+		if(this.size==1)
+			this.tail = this.head;
+
             // TODO 5
 	}
 
 	@Override
 	public T dequeue() throws NoSuchElementException {
             // TODO 6
-            return null;
+		if(isEmpty()) throw new NoSuchElementException();
+		T temp = this.tail.data;
+		if(this.size==1){
+			this.head = null;
+			this.tail = null;
+			this.size--;
+			return temp;
+		}
+		this.tail = this.tail.prev;
+		this.size--;
+        return temp;
 	}
 
 	@Override
 	public T peek() throws NoSuchElementException {
             // TODO 7
-            return null;
+			if(isEmpty()) throw new NoSuchElementException();
+            return this.tail.data;
 	}
 
 	
 	@Override
 	public UnboundedQueueInterface<T> reversed() {
             // TODO 8
-            return null;
+			if(isEmpty()) throw new NoSuchElementException();
+			Queue<T> revQueue = reversedHelper(this.size);
+
+			
+            return revQueue;
+	}
+
+	public UnboundedQueueInterface<T> reversedHelper(int size){
+
+		if(size == 0) return this.reversed;
+		if(size!=1){
+			this.reversed.enqueue(this.head.data);
+			this.head = this.head.next;
+			return reversedHelper(size-1);
+			
+		}
+		else{
+			this.reversed.enqueue(this.tail.data);
+			return this.reversed;
+		}
+		return this.reversed;
+
+
 	}
 }
-
 class Node<T> {
 	public T data;
 	public Node<T> next;
